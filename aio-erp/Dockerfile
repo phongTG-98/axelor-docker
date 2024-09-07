@@ -1,4 +1,4 @@
-FROM axelor/aio-builder AS builder
+FROM tgp9881/axelor-builder AS builder
 
 RUN mkdir -p /app/src
 WORKDIR /app/src
@@ -17,7 +17,7 @@ RUN \
   sed -e 's|^application.theme.*|application.theme = modern|g' -i src/main/resources/axelor-config.properties && \
   ./gradlew --no-daemon -x test build
 
-FROM axelor/aio-base
+FROM tgp9881/axelor-base
 LABEL maintainer="Axelor <support@axelor.com>"
 
 COPY --from=builder /app/src/axelor-erp/build/libs/axelor-erp-*.war $CATALINA_BASE/webapps/ROOT.war
