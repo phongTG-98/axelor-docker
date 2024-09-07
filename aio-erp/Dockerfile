@@ -1,11 +1,11 @@
-FROM axelor/aio-builder as builder
+FROM axelor/aio-builder AS builder
 
 RUN mkdir -p /app/src
 WORKDIR /app/src
 
 RUN \
   set -ex && \
-  git clone https://github.com/axelor/abs-webapp.git axelor-erp && \
+  git clone https://github.com/new-it-services/open-webapp.git axelor-erp && \
   sed -e 's|git@github.com:|https://github.com/|' -i axelor-erp/.gitmodules && \
   cd axelor-erp && \
   git checkout master && \
@@ -14,8 +14,8 @@ RUN \
   git submodule update && \
   git submodule foreach git checkout master && \
   git submodule foreach git pull origin master && \
-  sed -e 's|^application.theme.*|application.theme = modern|g' -i src/main/resources/application.properties && \
-  ./gradlew --no-daemon -x test npm-build build
+  sed -e 's|^application.theme.*|application.theme = modern|g' -i src/main/resources/axelor-config.properties && \
+  ./gradlew --no-daemon -x test build
 
 FROM axelor/aio-base
 LABEL maintainer="Axelor <support@axelor.com>"

@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk8 as builder
+FROM adoptopenjdk/openjdk11 AS builder
 
 RUN set -ex \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update \
@@ -72,23 +72,26 @@ RUN set -ex \
 FROM adoptopenjdk/openjdk8
 LABEL maintainer="Axelor <support@axelor.com>"
 
+
 RUN set -ex \
 	&& DEBIAN_FRONTEND=noninteractive apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get upgrade -y \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y gnupg dirmngr apt-transport-https locales \
 	&& apt-key adv --batch --fetch-keys http://nginx.org/keys/nginx_signing.key \
-	&& echo "deb http://nginx.org/packages/mainline/ubuntu/ bionic nginx" >> /etc/apt/sources.list \
+	&& echo "deb http://nginx.org/packages/mainline/ubuntu/ focal nginx" >> /etc/apt/sources.list \
 	&& apt-key adv --batch --fetch-keys https://www.postgresql.org/media/keys/ACCC4CF8.asc \
-	&& echo 'deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main' > /etc/apt/sources.list.d/pgdg.list \
+	&& echo 'deb http://apt.postgresql.org/pub/repos/apt/ focal-pgdg main' > /etc/apt/sources.list.d/pgdg.list \
 	&& apt-key adv --batch --fetch-keys https://deb.nodesource.com/gpgkey/nodesource.gpg.key \
-	&& echo 'deb https://deb.nodesource.com/node_8.x bionic main' > /etc/apt/sources.list.d/nodesource.list \
+	&& echo 'deb https://deb.nodesource.com/node_8.x/ bionic main' > /etc/apt/sources.list.d/nodesource.list \
 	&& apt-key adv --batch --fetch-keys https://dl.yarnpkg.com/debian/pubkey.gpg \
 	&& echo 'deb https://dl.yarnpkg.com/debian/ stable main' > /etc/apt/sources.list.d/yarn.list \
+  ##  && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 8B48AD6246925553 7638D0442b90d010 CBF8D6FD518E17E1 \
+  ##  && echo 'deb https://archive.debian.org/debian/ jessie main' > /etc/apt/sources.list\
 	&& DEBIAN_FRONTEND=noninteractive apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get upgrade -y \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y \
 		supervisor gosu postgresql-9.6 postgresql-contrib-9.6 \
-		libapr1 nginx nginx-module-xslt nginx-module-geoip nginx-module-image-filter nginx-module-njs gettext-base \
+	    libapr1 libreadline-java nginx nginx-module-xslt nginx-module-geoip nginx-module-image-filter nginx-module-njs gettext-base \
 		git-core nodejs yarn \
 	&& rm -rf /var/lib/apt/lists/*
 

@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk8
+FROM adoptopenjdk/openjdk11
 LABEL maintainer="Axelor <support@axelor.com>"
 
 RUN set -ex \
@@ -19,10 +19,10 @@ RUN set -ex \
 RUN set -ex && \
 	echo 'en_GB.UTF-8 UTF-8' >> /etc/locale.gen && \
 	echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen && locale-gen
-ENV LANG en_US.utf8
+ENV LANG=en_US.utf8
 
 # jdk
-ENV JAVA_HOME /opt/java/openjdk
+ENV JAVA_HOME=/opt/java/openjdk
 
 RUN set -ex \
 	&& update-alternatives --install /usr/bin/java java $JAVA_HOME/bin/java 20000 \
@@ -32,14 +32,15 @@ RUN set -ex \
 RUN \
   set -ex && \
   mkdir -p /app/src && cd /app/src && \
-  git clone https://github.com/axelor/axelor-development-kit.git && \
-  cd axelor-development-kit && \
+  git clone https://github.com/new-it-services/axelor-dev-kit.git && \
+  export NODE_OPTIONS="--max-old-space-size=4096" &&\
+  cd axelor-dev-kit && \
   ./gradlew --no-daemon -x test build
 
 RUN \
   set -ex && \
   cd /app/src && \
-  git clone https://github.com/axelor/abs-webapp.git axelor-erp && \
+  git clone https://github.com/new-it-services/open-webapp.git axelor-erp && \
   sed -e 's|git@github.com:|https://github.com/|' -i axelor-erp/.gitmodules && \
   cd axelor-erp && \
   git checkout master && \
@@ -48,7 +49,7 @@ RUN \
   git submodule update && \
   git submodule foreach git checkout master && \
   git submodule foreach git pull origin master && \
-  sed -e 's|^application.theme.*|application.theme = modern|g' -i src/main/resources/application.properties && \
-  ./gradlew --no-daemon -x test npm-build build && \
+  sed -e 's|^application.theme.*|application.theme = modern|g' -i src/main/resources/axelor-config.properties && \
+  ./gradlew --no-daemon -x test build && \
   rm -rf /app
 
